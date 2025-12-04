@@ -11,7 +11,7 @@ on: # multiple triggers when this workflow can run
         - job2_codeCoverage
 jobs:
   job1_build:
-    if: ${{ github.event.inputs.job_name == job1_build }}
+    if: ${{ github.event.inputs.job_name == 'job1_build' }}
     runs-on: ubuntu-latest
     steps:
     - name: Clone the repo
@@ -24,7 +24,7 @@ jobs:
     - name: build java code
       run: mvn clean package
   job2_codeCoverage:
-    if: ${{ github.event.inputs.job_name == job2_codeCoverage }}
+    if: ${{ github.event.inputs.job_name == 'job2_codeCoverage' }}
     #needs: build # creating dependency between two jobs
     runs-on: ubuntu-latest
     steps:
