@@ -1,0 +1,46 @@
+name: Mutiple Job to Trigger
+on: # multiple triggers when this workflow can run
+ workflow_dispatch:
+  inputs: #user to select the jobname
+    job_name: #keyword given by actions for
+      description: "Select the Job to run"
+      required: true
+      type: choice
+      options:
+        - job1_build
+        - job2_codeCoverage
+jobs:
+  job1_build:
+    if: ${{ github.event.inputs.job_name == job1_build }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone the repo
+      uses: actions/checkout@v6
+    - name: Install java on runner
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: build java code
+      run: mvn clean package
+  job2_codeCoverage:
+    if: ${{ github.event.inputs.job_name == job2_codeCoverage }}
+    #needs: build # creating dependency between two jobs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone the repo
+      uses: actions/checkout@v6
+    - name: Install java on runner
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: build java code
+      run: mvn clean package
+    - name:  Code Coverage using Sonarcloud
+      run: mvn -B verify sonar:sonar -Dsonar.projectKey=nagaraj1981_addressbook -Dsonar.organization=nagaraj1981 -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.token=$SONAR_TOKEN
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}       
+
+
